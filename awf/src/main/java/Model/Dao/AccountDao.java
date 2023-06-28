@@ -65,8 +65,14 @@ public class AccountDao {
     }
     public String CreateUserAccount(String _id,String _sha256pwd)
     {
+    	
         
         try {
+        	if(DBDao.Instance().con == null)
+        	{
+        		DBDao.Instance().DBConnect();
+        		System.out.println("dhowkRN");
+        	}
             String sql = "insert into useraccount (UserId,UserPwd) values (?,?)";
             ps = DBDao.Instance().con.prepareStatement(sql);
 			ps.setString(1,_id); 

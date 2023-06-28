@@ -22,11 +22,17 @@ public class DBDao {
     
     public String DBConnect()
     {
+    	
         try {
+        	Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root","root");
+            System.out.println("tjdrhd");
+            
             return "성공";
         } catch (Exception e) {
-
+        	
+        	System.out.println(e.getMessage());
+        	System.out.println("qltjdrhd");
             return e.getMessage();
         }
     }

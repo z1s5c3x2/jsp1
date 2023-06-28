@@ -51,7 +51,15 @@ public class test extends HttpServlet {
 			System.out.println("??");
 			isC=true;
 		}
-		AccountDao.Instance().CreateUserAccount(request.getParameter("userId"), request.getParameter("userPwd"));
+		if(request.getParameter("action").equals("SignUp"))
+		{
+			AccountDao.Instance().CreateUserAccount(request.getParameter("userId"), request.getParameter("userPwd"));
+		}
+		else if(request.getParameter("action").equals("Login"))
+		{
+			AccountDao.Instance().AccountLogin(request.getParameter("userId"), request.getParameter("userPwd"));
+			
+		}
 	}
 
 }
