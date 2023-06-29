@@ -2,15 +2,14 @@ package controller;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashMap;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.mapper.Mapper;
 import org.json.simple.JSONObject;
 
 import Model.Dao.AccountDao;
@@ -99,6 +98,9 @@ public class LoginController extends HttpServlet {
 			{
 				_result += "로그인 성공!!";
 				isSuccess = true;
+				
+				request.getSession().setAttribute("userId", _getId);
+				request.getSession().setAttribute("isLogin", true);
 			}
 		}
 		response.setCharacterEncoding("UTF-8");

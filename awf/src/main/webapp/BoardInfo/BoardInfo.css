@@ -1,0 +1,32 @@
+@charset "UTF-8";
+
+ body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .post-detail {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+        .post-detail h3 {
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        .post-detail p {
+            margin-top: 0;
+            line-height: 1.5;
+        }
+        .post-detail .post-meta {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #888;
+        }

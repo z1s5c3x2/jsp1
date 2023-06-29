@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import Model.Dao.DBDao;
 import Service.FileService;
@@ -54,6 +55,7 @@ public class SaltService extends HttpServlet {
 		//System.out.println(this.getServletContext().getRealPath(""));
 		DBDao.Instance().DBConnect();
 		SaltUpdater();
+		HttpSession session = request.getSession();
 		
 	}
 	void SaltUpdater() throws IOException

@@ -4,14 +4,14 @@
 let tmplist;
 
 $.ajax({
-	url : "SaltService",
+	url : "../SaltService",
 	type : 'post',
 
 	success : function(data) {
 		
      },
 	error : function(e) {
-		console.log(e)
+		console.log(e+"dho")
 	}
 });
  function SignUp()
@@ -21,7 +21,7 @@ $.ajax({
 	 let _pwd = document.querySelector(".SignPwd").value
 	 
 	$.ajax({
-	url : "LoginController",
+	url : "../LoginController",
 	type : 'post',
 	async:false,
 	data : {
@@ -48,7 +48,7 @@ function Login()
 	 let _pwd = document.querySelector(".LoginPwd").value
 	 
 	 $.ajax({
-	url : "LoginController",
+	url : "../LoginController",
 	type : 'post',
 	data : {
 		action : "Login",

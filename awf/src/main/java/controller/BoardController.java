@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONObject;
+
+import com.google.gson.Gson;
+
 import Model.Dao.AccountDao;
 import Model.Dao.BoardDao;
 import Model.Dto.BoardDto;
@@ -28,7 +32,7 @@ public class BoardController extends HttpServlet {
 			}
 			return instance;
 		}
-	    public int nowPage;
+	    public int nowPage = 0;
 	
 	    public void WriteBoardInit(String _title, String _content)
 	    {
@@ -52,8 +56,10 @@ public class BoardController extends HttpServlet {
 	    {
 	        if(nowPage+_page < 0 || nowPage+_page > 10)
 	        {
+
 	            return false;
 	        }
+
 	        return true;
 	    }
 	    public ArrayList<BoardDto> SearchDetail(String _User,String _title)
@@ -92,7 +98,38 @@ public class BoardController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		//response.getWriter().append("Served at: ").append(request.getContextPath());
+		
+
+		if(request.getParameter("action").equals("Detail"))
+		{
+			String jsonBoard = new Gson().toJson(SearchIdBoard(Integer.parseInt(request.getParameter("id"))));
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(jsonBoard);
+		}
+		else {
+			
+			int _page = Integer.parseInt(request.getParameter("page"));
+
+				nowPage += _page;
+				ArrayList<BoardDto> retBoardList = ViewBoard();
+				String jsonBoardList = new Gson().toJson(retBoardList);
+
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				response.getWriter().write(jsonBoardList);
+				System.out.println(retBoardList.size());
+				if(retBoardList.size() == 0)
+				{
+					nowPage -= _page;
+					throw new ServletException("페이지 탐색 오류");
+					
+				}
+
+			
+			
+		}
 	}
 
 	/**
@@ -100,7 +137,8 @@ public class BoardController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		//doGet(request, response);
+		
 	}
 
 }

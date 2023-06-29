@@ -3,16 +3,32 @@
 <head>
 <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+    
   <title>게시판</title>
   <link rel="stylesheet" href="Board.css">
 </head>
 <body>
-  <h1>게시판</h1>
+
 
   <h1>게시글 리스트</h1>
+    <table class="boardTable">
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>내용</th>
+            <th>작성자</th>
+            <th>날짜</th>
+            <th>조회수</th>
+        </tr>
 
-  <div id="post-list"></div>
+    </table>
+    <div class="BoardViewSelector">
+	<button onclick="PageControll(-1)"> < </button>
+	<button onclick="PageControll(1)"> > </button>
+	</div>
+  
 
-  <script src="Board.js"></script>
+<script src="Board.js"></script>
 </body>
 </html>

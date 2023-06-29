@@ -3,51 +3,91 @@
 let posts = [
 ];
 
-
+let tableInit = `<table>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>내용</th>
+            <th>작성자</th>
+            <th>날짜</th>
+            <th>조회수</th>
+        </tr>
+    </table>`
+    
 $.ajax({
-	url : "LoginController",
+	url : "../BoardController",
 	type : 'get',
+	dataType: 'json',
 	async:false,
 	data : {
 		
-		action : "BoardGetList",
+		action : "fisrt",
+		page: 0 
 
 	},
 	success : function(data) {
-			let Jdata = JSON.parse(data)
-				alert(Jdata.msg)
+
+		updatePostList(data);
      },
-	error : function() {
-		alert("error");
+	error : function(e) {
+		console.log(e)
 	}
 	});
 // 게시글 목록 업데이트 함수
-function updatePostList() {
-  const postList = document.getElementById('post-list');
-  postList.innerHTML = '';
-
-  for (let i = 0; i < posts.length; i++) {
-    const post = posts[i];
-
-    const postDiv = document.createElement('div');
-    postDiv.classList.add('post');
-
-    const titleElement = document.createElement('h2');
-    titleElement.textContent = post.title;
-
-    const contentElement = document.createElement('p');
-    contentElement.textContent = post.content;
-
-    postDiv.appendChild(titleElement);
-    postDiv.appendChild(contentElement);
-
-    postList.appendChild(postDiv);
-  }
+function updatePostList(getBoardList) {
+	
+ 	document.querySelector(".boardTable").innerHTML =tableInit
+ 	for(boardItem of getBoardList)
+ 	{
+		 
+ 		document.querySelector(".boardTable").innerHTML+=`<tr onclick="BoardViewDetail(${boardItem.id})">
+            <td id="postNumber">${boardItem.id}</td>
+            <td id="postTitle">${boardItem.title}</td>
+            <td id="postContent">${boardItem.writer}</td>
+            <td id="postAuthor">${boardItem.content}</td>
+            <td id="postDate">${boardItem.createDate}</td>
+            <td id="postViews">${boardItem.viewCount}</td>
+        </tr>`
+        
+       }
+       
+       
+       posts=[]
+       	for(item of getBoardList)
+		{
+			posts.push(item)
+		}
 }
+function BoardViewDetail(num)
+{
+	location.href="/awf/BoardInfo/BoardInfo.html?boardId="+num 
+}
+function PageControll(getPage)
+{
+	$.ajax({
+	url : "../BoardController",
+	type : 'get',
+	dataType: 'json',
+	async:false,
+	data : {
+		action:"pagecontroll",
+		page : getPage,
 
+	},
+	success : function(data) {
+
+		updatePostList(data);
+     },
+	error : function(xhr, textStatus, errorThrown) {
+		if(getPage == -1) alert("첫번째페이지입니다")		
+		else if(getPage == 1) alert("마지막페이지입니다")
+	}
+	});
+}
 // 페이지 로드 시 게시글 목록 업데이트
-window.addEventListener('load', function() {
-  updatePostList();
-});
+//window.addEventListener('load', function() {
+//  updatePostList();
+//});
+
 
 
