@@ -1,12 +1,14 @@
 package Service;
-import Model.Dao.AccountDao;
-import Model.Dto.FileDto;
-import java.sql.Date;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Date;
+
+import Model.Dao.AccountDao;
+import Model.Dto.FileDto;
+import controller.SaltService;
 
 public class FileService extends FileDto{
     private static FileService instance;

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import Model.Dao.AccountDao;
 import Model.Dao.DBDao;
-import Service.SaltService;
+import Service.HashService;
 
 /**
  * Servlet implementation class test
@@ -19,47 +19,37 @@ import Service.SaltService;
 public class test extends HttpServlet {
 	boolean isC = false;
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+
     public test() {
-    	
-        super();
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		
 	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		//doGet(request, response);
+
 		if(!isC)
 		{
 			DBDao.Instance().DBConnect();
-			System.out.println("??");
+			
 			isC=true;
 		}
+		String _getId = request.getParameter("userId");
+		String _getPwd = request.getParameter("userPwd");
 		if(request.getParameter("action").equals("SignUp"))
 		{
-			AccountDao.Instance().CreateUserAccount(request.getParameter("userId"), request.getParameter("userPwd"));
+			AccountDao.Instance().CreateUserAccount(_getId,HashService.Instance().GetHash256(_getId, _getPwd) 
+			);
 		}
 		else if(request.getParameter("action").equals("Login"))
 		{
-			AccountDao.Instance().AccountLogin(request.getParameter("userId"), request.getParameter("userPwd"));
+			AccountDao.Instance().AccountLogin(_getId, HashService.Instance().GetHash256(_getId, _getPwd));
 			
 		}
+		response.getWriter().print( "sing sucess" );
 	}
 
 }

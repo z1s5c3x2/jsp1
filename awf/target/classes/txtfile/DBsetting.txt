@@ -1,0 +1,30 @@
+DB = test
+
+table
+
+create table useraccount(
+    userid varchar(20) not null,
+    userpwd varchar(64) not null,
+    primary key(userid)
+);
+create table board(
+    id int AUTO_INCREMENT,
+    title varchar(20) not null,
+    writer varchar(20) not null , 
+    content varchar(200) not null,
+    createdate date default (current_date),
+    viewcount int default 0,
+    primary key(id),
+    foreign key(writer) references useraccount(userid) on delete CASCADE
+);
+
+create table comment(
+    id int AUTO_INCREMENT,
+    board_id int not null,
+    writer varchar(20) not null,
+    content varchar(100) not null,
+    createdate date default (current_date),
+    primary key(id),
+    foreign key(board_id) references board(id) on delete CASCADE,
+    foreign key(writer) references useraccount(userid) on delete CASCADE
+);

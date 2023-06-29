@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+.wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.inItem {
+  margin-bottom: 20px;
+  margin-right: 50px;
+}
+
+.inItem input {
+  display: block;
+  width: 200px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.inItem button {
+  display: block;
+  width: 200px;
+  padding: 10px;
+  background-color: #3C1E1E;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.signresult,
+.LoginResult {
+  margin-top: 10px;
+  text-align: center;
+  color: #888;
+}
