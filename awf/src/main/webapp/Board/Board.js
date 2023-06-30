@@ -62,6 +62,10 @@ function BoardViewDetail(num)
 {
 	location.href="/awf/BoardInfo/BoardInfo.html?boardId="+num 
 }
+function WritePost()
+{
+	location.href="/awf/WritePost/WritePost.html"
+}
 function PageControll(getPage)
 {
 	$.ajax({

@@ -15,6 +15,7 @@ import Service.FileService;
 /**
  * Servlet implementation class SaltService
  */
+
 @WebServlet("/SaltService")
 public class SaltService extends HttpServlet {
 	private static final long serialVersionUID = 1L;

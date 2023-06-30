@@ -20,7 +20,7 @@ public class test extends HttpServlet {
 	boolean isC = false;
 	private static final long serialVersionUID = 1L;
 
-    public test() {
+    public test() { 
         // TODO Auto-generated constructor stub
     }
 

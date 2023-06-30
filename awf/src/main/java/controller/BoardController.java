@@ -34,10 +34,11 @@ public class BoardController extends HttpServlet {
 		}
 	    public int nowPage = 0;
 	
-	    public void WriteBoardInit(String _title, String _content)
+	    public void WriteBoardInit(String _User ,String _title, String _content)
 	    {
-	        String _w = AccountDao.Instance().adt.GetId();
-	        BoardDao.Instance().WriteBoard(_w,_title,_content);
+	    	
+	       // String _w = "asd";//AccountDao.Instance().adt.GetId();
+	        BoardDao.Instance().WriteBoard(_User,_title,_content);
 
 	    }
 	    public void UpdateBoard(BoardDto _bdt)
@@ -107,6 +108,12 @@ public class BoardController extends HttpServlet {
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write(jsonBoard);
+		}
+		else if(request.getParameter("action").equals("Write"))
+		{
+			String _uid = request.getSession().getAttribute("userId").toString();
+			WriteBoardInit(_uid,request.getParameter("title"),request.getParameter("content"));
+			
 		}
 		else {
 			
