@@ -1,32 +1,57 @@
 @charset "UTF-8";
 
- body {
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h2 {
-            margin-top: 0;
-        }
-        .post-detail {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-        }
-        .post-detail h3 {
-            margin-top: 0;
-            font-size: 1.2em;
-        }
-        .post-detail p {
-            margin-top: 0;
-            line-height: 1.5;
-        }
-        .post-detail .post-meta {
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #888;
-        }
+ .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .post-detail {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .post-meta {
+      margin-top: 10px;
+    }
+
+    .comment-list {
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+    }
+
+    .comment {
+      margin-bottom: 20px;
+    }
+
+    .comment-meta {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .comment-actions {
+      margin-top: 10px;
+    }
+
+    .comment-actions button {
+      margin-right: 5px;
+    }
+
+    .comment-input {
+      margin-top: 20px;
+    }
+
+    .comment-input textarea {
+      width: 100%;
+      height: 80px;
+    }
+
+    .comment-edit {
+      margin-top: 20px;
+    }

@@ -28,7 +28,7 @@
             <div class="post-meta">
                 <span id="postAuthor">작성자 : ${data.writer}</span> |
                 <span id="postDate">작성 날짜:${data.createDate}</span> |
-                <span id="postViews">조회수:${data.viewCount}</span>
+                <span id="postViews">조회수:${data.viewCount}</span></div>
 		`
 		
      },
@@ -36,3 +36,22 @@
 		console.log(e+"?")
 	}
 	});
+
+/*
+
+
+    <div class="comment-edit">
+      <textarea></textarea>
+      <button onclick="UpdateComment()">수정</button>
+      <button onclick="CancelEdit()">취소</button>
+    </div>
+
+댓글 수정 창
+
+<div class="comment-actions">
+          <button onclick="EditComment()">댓글 수정</button>
+          <button onclick="DeleteComment()">댓글 삭제</button>
+        </div>
+        
+ 작성자와 로그인한 사람이 일치하면
+ */

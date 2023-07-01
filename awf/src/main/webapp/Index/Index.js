@@ -62,7 +62,7 @@ function Login()
 		alert(Jdata.msg)
 		if(Jdata.isSuccess)
 		{
-			location.href= "/awf/Board/Board.html"			
+			location.href= "/awf/Board/Board.html?page=1"			
 		}
 		
 		

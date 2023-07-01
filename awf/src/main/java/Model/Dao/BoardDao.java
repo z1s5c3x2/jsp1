@@ -19,7 +19,21 @@ public class BoardDao {
 	}
     private ResultSet rs;
     private PreparedStatement ps;
-
+    public Integer GetMaxPage()
+    {
+    	try
+    	{
+    		String sql = "select count(*) from board";
+    		ps = DBDao.Instance().con.prepareStatement(sql);
+    		rs = ps.executeQuery();
+    		rs.next();
+    		
+    		return rs.getInt(1);
+    	}catch (Exception e) {
+			// TODO: handle exception
+		}
+    	return -1;
+    }
 	public void WriteBoard(String _w,String _t,String _c)
 	{
 		try {

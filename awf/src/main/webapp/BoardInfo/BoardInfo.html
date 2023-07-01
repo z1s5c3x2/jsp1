@@ -4,15 +4,40 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
   <script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
+  <link rel="stylesheet" href="BoardInfo.css">
 </head>
+
 <body>
  <div class="container">
         <h2>게시글 상세보기</h2>
         <div class="post-detail">
-           
+
         </div>
     </div>
+	
+	
+	<div class="comment-list">
+      <div class="comment">
+        <div class="comment-meta">
+          <span class="comment-author">댓글 작성자</span> |
+          <span class="comment-date">댓글 작성 날짜</span>
+        </div>
+        <div class="comment-content">
+          댓글 내용
+        </div>
+      </div>
 
+      <!-- Add more comments here -->
+
+    </div>
+
+    <div class="comment-input">
+      <textarea placeholder="댓글을 입력하세요"></textarea>
+      <button onclick="SubmitComment()">댓글 작성</button>
+    </div>
+
+
+  
     <script src="BoardInfo.js"></script>
 </body>
 </html>
