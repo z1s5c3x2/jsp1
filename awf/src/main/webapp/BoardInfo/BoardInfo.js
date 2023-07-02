@@ -146,6 +146,7 @@ function DeleteComment(_gid)
 		action:"CommentDelete",
 		id : _gid,
 
+
 	},
 	success : function(data) {
 		location.href= "/awf/BoardInfo/BoardInfo.html?boardId="+new URL(window.location).searchParams.get("boardId")
