@@ -15,7 +15,9 @@ import com.google.gson.Gson;
 
 import Model.Dao.AccountDao;
 import Model.Dao.BoardDao;
+import Model.Dao.CommentDao;
 import Model.Dto.BoardDto;
+import Model.Dto.CommentDto;
 
 /**
  * Servlet implementation class BoardController
@@ -32,8 +34,15 @@ public class BoardController extends HttpServlet {
 			}
 			return instance;
 		}
+		public ArrayList<CommentDto> GetCommentList(int _boardId)
+	    {
+	        return CommentDao.Instance().GetCommentList(_boardId);
+	    }
+	    public void AddComment(String _writer,String  _com,int _boardId)
+	    {
+	        CommentDao.Instance().AddComment(_writer, _com, _boardId);
+	    }
 	    
-	
 	    public void WriteBoardInit(String _User ,String _title, String _content)
 	    {
 	    	
@@ -43,7 +52,7 @@ public class BoardController extends HttpServlet {
 	    }
 	    public void UpdateBoard(BoardDto _bdt)
 	    {
-	        BoardDao.Instance().UpdateBoard(_bdt);
+	        //BoardDao.Instance().UpdateBoard(_bdt);
 	    }
 	    public void DeleteBoard(int _id)
 	    {
@@ -84,7 +93,7 @@ public class BoardController extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-
+    
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -100,17 +109,38 @@ public class BoardController extends HttpServlet {
 
 			
 		}
+		else if(request.getParameter("action").equals("Addcomment"))
+		{
+
+			AddComment(request.getSession().getAttribute("userId").toString(),request.getParameter("content"),Integer.parseInt(request.getParameter("id")));
+		}
+		else if(request.getParameter("action").equals("delete"))
+		{
+			 BoardDao.Instance().DeleteBoard(Integer.parseInt(request.getParameter("id")));
+		}
+		else if(request.getParameter("action").equals("Modify"))
+		{
+
+			BoardDao.Instance().UpdateBoard(request.getParameter("title"),request.getParameter("content"),Integer.parseInt(request.getParameter("id")));
+		}
+		
 		else if(request.getParameter("action").equals("Detail"))
 		{
-			String jsonBoard = new Gson().toJson(SearchIdBoard(Integer.parseInt(request.getParameter("id"))));
+			BoardDto _bdt =  SearchIdBoard(Integer.parseInt(request.getParameter("id")));
+			JSONObject jo = new JSONObject();
+			String retcomlist = new Gson().toJson(GetCommentList(Integer.parseInt(request.getParameter("id"))));
+			jo.put("commentList", retcomlist);
+			jo.put("item", _bdt);
+			jo.put("isupdate", request.getSession().getAttribute("userId").equals(_bdt.getWriter()));
+			String jsonBoard = new Gson().toJson(jo);
+			
+			
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write(jsonBoard);
-		}
-		else if(request.getParameter("action").equals("Write"))
-		{
-			String _uid = request.getSession().getAttribute("userId").toString();
-			WriteBoardInit(_uid,request.getParameter("title"),request.getParameter("content"));
+			
+			//response.getWriter().write( new Gson().toJson(jo));
+			
 			
 		}
 		else {
@@ -125,23 +155,33 @@ public class BoardController extends HttpServlet {
 				response.setCharacterEncoding("UTF-8");
 				response.getWriter().write(jsonBoardList);
 				//System.out.println(retBoardList.size());
-				if(retBoardList.size() == 0)
-				{
-					throw new ServletException("페이지 탐색 오류");
-					
-				}
+
 
 			
 			
 		}
 	}
-
+	/**
+	 * @see HttpServlet#doPut(HttpServletRequest request, HttpServletResponse response)
+	 
+	protected void doPut(HttpServletRequest req, javax.servlet.http.HttpServletResponse resp)
+			throws ServletException, IOException {
+		System.out.println(req.getParameter("title"));
+		// TODO Auto-generated method stub
+		
+	}
+	*/
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//doGet(request, response);
+		if(request.getParameter("action").equals("Write"))
+		{
+			String _uid = request.getSession().getAttribute("userId").toString();
+			WriteBoardInit(_uid,request.getParameter("title"),request.getParameter("content"));
+			
+		}
 		
 	}
 

@@ -64,15 +64,15 @@ public class BoardDao {
 			// TODO: handle exception
 		}
 	}
-	public void UpdateBoard(BoardDto _b)
+	public void UpdateBoard(String _title, String _con,int _id)
 	{
 		try {
 			String sql = "update board set content =?,title =? where id=?";
 			ps = DBDao.Instance().con.prepareStatement(sql);
 
-			ps.setString(1, _b.getContent());
-			ps.setString(2, _b.getTitle());
-			ps.setInt(3, _b.getId());
+			ps.setString(1, _con);
+			ps.setString(2, _title);
+			ps.setInt(3, _id);
 			ps.executeUpdate();
 		} catch (Exception e) {
 			// TODO: handle exception
