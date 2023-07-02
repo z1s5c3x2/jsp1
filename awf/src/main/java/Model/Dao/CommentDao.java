@@ -28,7 +28,7 @@ public class CommentDao {
             rs = ps.executeQuery();
             while(rs.next())
             {
-                comlist.add(new CommentDto(rs.getInt("id"), rs.getString("writer"), rs.getString("content"), rs.getDate("createdate")));
+                comlist.add(new CommentDto(rs.getInt("id"),rs.getInt("board_id"), rs.getString("writer"), rs.getString("content"), rs.getDate("createdate")));
             }
         } catch (Exception e) {
             // TODO: handle exception
@@ -48,5 +48,17 @@ public class CommentDao {
         } catch (Exception e) {
             // TODO: handle exception
         }
+    }
+    public void DeleteComment(int _id)
+    {
+    	try {
+    		String sql ="delete from comment where id = ?";
+    		ps = DBDao.Instance().con.prepareStatement(sql);
+    		ps.setInt(1, _id);
+    		ps.executeUpdate();
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
     }
 }

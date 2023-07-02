@@ -1,9 +1,12 @@
 package controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -84,8 +87,26 @@ public class BoardController extends HttpServlet {
 	        return BoardDao.Instance().GetIdBoard(_num);
 	    }
 	
-	
-       
+	    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	    {
+	    	System.out.println("doput");
+	    	BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+	    	String _rd =null;
+	    	String _rd2= "";
+	    	while((_rd = br.readLine()) != null)
+	    	{
+	    		_rd2 += _rd;
+	    	}
+	    	System.out.println(_rd2);
+	    	
+	    }
+	    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	    {
+	    	BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+	    	String _str = br.readLine();
+	    	int did = Integer.parseInt(_str.split("Delete")[1].split("=")[1]);
+	    	CommentDao.Instance().DeleteComment(did);
+	    }
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -129,6 +150,7 @@ public class BoardController extends HttpServlet {
 			BoardDto _bdt =  SearchIdBoard(Integer.parseInt(request.getParameter("id")));
 			JSONObject jo = new JSONObject();
 			String retcomlist = new Gson().toJson(GetCommentList(Integer.parseInt(request.getParameter("id"))));
+			jo.put("loginUser", request.getSession().getAttribute("userId"));
 			jo.put("commentList", retcomlist);
 			jo.put("item", _bdt);
 			jo.put("isupdate", request.getSession().getAttribute("userId").equals(_bdt.getWriter()));

@@ -1,13 +1,24 @@
-/**
- * 
- */
 
  /*
- 
-			 
-  */
- 
- 
+ $.ajax({
+	url : "../BoardController",
+	type : 'put',
+	dataType: 'text',
+	async:false,
+	data : {
+		test:"123",
+		test1:"12334"
+
+	},
+	success : function(data) {
+		
+     },
+     
+	error : function(e,b) {
+		console.log(e,b)
+	}
+	});*/
+	
  
  $.ajax({
 	url : "../BoardController",
@@ -22,7 +33,8 @@
 
 	},
 	success : function(data) {
-		console.log(data)
+		let lgu = data.loginUser
+		
 		document.querySelector(".post-detail").innerHTML =
 		`
 		<h3 id="postNumber">번호 :${data.item.id}</h3>
@@ -37,14 +49,21 @@
 		let Jl = JSON.parse(data.commentList)
 		for(comitem of Jl)
 		{
-			console.log(comitem)
-			document.querySelector(".comment").innerHTML += ` <div class="comment-meta">
+		
+			document.querySelector(".comment").innerHTML += ` <div class="comment-meta citem_${comitem.id}">
           	<span class="comment-author">작성자 : ${comitem.writer}</span> |
           	<span class="comment-date">댓글 작성 날짜:${comitem.createdate}</span>
         	</div>
         	<div class="comment-content">
           	내용 : ${comitem.content}
         	</div>`
+        	if(lgu == comitem.writer)
+        	{
+				document.querySelector(".comment").innerHTML += `<div class="comment-actions">
+          <button onclick="EditComment(citem_${comitem.id})">댓글 수정</button>
+          <button onclick="DeleteComment(${comitem.id})">댓글 삭제</button>
+        </div>`
+			}
 		}
 		if(data.isupdate)
 		{
@@ -86,7 +105,7 @@ function DeletePost(gid)
 
 function UpdatePost(gid)
 {
-	console.log("???")
+
 	location.href= "/awf/BoardModify/BoardModify.html?boardId="+gid
 	//http://localhost:8080/awf/Board/Board.html?page=1
 }
@@ -115,21 +134,38 @@ function SubmitComment()
 	}
 	});
 }
-/*
 
+function DeleteComment(_gid)
+{
+	$.ajax({
+	url : "../BoardController",
+	type : 'delete',
+	dataType: 'text',
+	async:false,
+	data : {
+		action:"CommentDelete",
+		id : _gid,
 
-    <div class="comment-edit">
-      <textarea></textarea>
-      <button onclick="UpdateComment()">수정</button>
-      <button onclick="CancelEdit()">취소</button>
-    </div>
-
-댓글 수정 창
-
-<div class="comment-actions">
-          <button onclick="EditComment()">댓글 수정</button>
-          <button onclick="DeleteComment()">댓글 삭제</button>
-        </div>
-        
- 작성자와 로그인한 사람이 일치하면
- */
+	},
+	success : function(data) {
+		location.href= "/awf/BoardInfo/BoardInfo.html?boardId="+new URL(window.location).searchParams.get("boardId")
+		
+     },
+     
+	error : function(e,b) {
+		console.log(e,b)
+	}
+	});
+}
+function EditComment(onpos)
+{
+	document.querySelector(("."+onpos)).innerHTML +=`<div class="comment-edit">
+      			<textarea></textarea>
+      			<button onclick="UpdateComment()">수정</button>
+      				<button onclick="CancelEdit()">취소</button>
+    			</div>`
+}
+function CommentModify()
+{
+	/**/
+}

@@ -5,14 +5,23 @@ public class CommentDto {
     private String writer;
     private String content;
     private Date createdate;
-
-    public CommentDto(int _id,String _w,String _c,Date _d)
+    private int id;
+    public CommentDto(int _id,int _bid,String _w,String _c,Date _d)
     {
         super();
-        this.boardId = _id;
+        this.id = _id;
+        this.boardId = _bid;
         this.writer = _w;
         this.content = _c;
         this.createdate = _d;
+    }
+    public int getId()
+    {
+    	return this.id;
+    }
+    public void setId(int _gid)
+    {
+    	this.id = _gid;
     }
     public int getBoardId() {
         return this.boardId;
