@@ -60,7 +60,7 @@
         	if(lgu == comitem.writer)
         	{
 				document.querySelector(".comment").innerHTML += `<div class="comment-actions">
-          <button onclick="EditComment(citem_${comitem.id})">댓글 수정</button>
+          <button onclick="EditComment(${comitem.id})">댓글 수정</button>
           <button onclick="DeleteComment(${comitem.id})">댓글 삭제</button>
         </div>`
 			}
@@ -160,13 +160,39 @@ function DeleteComment(_gid)
 }
 function EditComment(onpos)
 {
-	document.querySelector(("."+onpos)).innerHTML +=`<div class="comment-edit">
-      			<textarea></textarea>
-      			<button onclick="UpdateComment()">수정</button>
-      				<button onclick="CancelEdit()">취소</button>
+	
+	document.querySelector(".citem_"+onpos).innerHTML +=`<div class="comment-edit">
+      			<textarea class="editarray"></textarea>
+      			<button onclick="UpdateComment(${onpos})">수정</button>
+      				<button onclick="CancelEdit(${onpos})">취소</button>
     			</div>`
 }
-function CommentModify()
+function UpdateComment(_comid)
 {
-	/**/
+	$.ajax({
+	url : "../BoardController",
+	type : 'put',
+	dataType: 'text',
+	async:false,
+	data : {
+		action:"CommentModify",
+		id : _comid,
+		content: document.querySelector("editarray").value
+		
+
+	},
+	success : function(data) {
+		location.href= "/awf/BoardInfo/BoardInfo.html?boardId="+new URL(window.location).searchParams.get("boardId")
+		
+     },
+     
+	error : function(e,b) {
+		console.log(e,b)
+	}
+	});
+}
+function CancelEdit(_gstr)
+{
+	
+	document.querySelector(".comment-edit").remove()
 }

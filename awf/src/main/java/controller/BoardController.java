@@ -89,7 +89,18 @@ public class BoardController extends HttpServlet {
 	
 	    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	    {
-	    	System.out.println("doput");
+
+	    	BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
+	    	String _str = br.readLine();
+	    	String acSplit = _str.split("action=")[1].split("&")[0];
+	    	System.out.println(_str);
+	    	if(acSplit.equals("CommentModify"))
+	    	{
+	    		int _cid = Integer.parseInt(_str.split("&")[1].split("=")[1]);
+	    		
+	    		//CommentDto retcd = CommentDao.Instance().SearchCommentByID();
+	    	}
+	    	/*
 	    	BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
 	    	String _rd =null;
 	    	String _rd2= "";
@@ -97,7 +108,7 @@ public class BoardController extends HttpServlet {
 	    	{
 	    		_rd2 += _rd;
 	    	}
-	    	System.out.println(_rd2);
+	    	System.out.println(_rd2);*/
 	    	
 	    }
 	    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException

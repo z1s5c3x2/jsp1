@@ -1,10 +1,9 @@
 package Model.Dao;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import Model.Dto.CommentDto;
-
-import java.sql.PreparedStatement;
 public class CommentDao {
     private static CommentDao instance;
 	public static CommentDao Instance()
@@ -36,6 +35,7 @@ public class CommentDao {
         }
         return comlist;
     }
+    
     public void AddComment(String _writer,String _com,int _boardId)
     {
         try {
@@ -60,5 +60,19 @@ public class CommentDao {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+    }
+    public CommentDto SearchCommentByID(int _id)
+    {
+    	CommentDto retcom = new CommentDto();
+    	try {
+			String sql = "select * from comment where id like ?";
+			ps = DBDao.Instance().con.prepareStatement(sql);
+    		ps.setInt(1, _id);
+    		retcom = new CommentDto(rs.getInt("id"),rs.getInt("board_id"), rs.getString("writer"), rs.getString("content"), rs.getDate("createdate"));
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    	return retcom;
     }
 }

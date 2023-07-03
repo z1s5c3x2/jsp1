@@ -6,6 +6,8 @@ public class CommentDto {
     private String content;
     private Date createdate;
     private int id;
+    public CommentDto()
+    {}
     public CommentDto(int _id,int _bid,String _w,String _c,Date _d)
     {
         super();
