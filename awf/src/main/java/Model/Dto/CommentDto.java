@@ -6,9 +6,12 @@ public class CommentDto {
     private String content;
     private Date createdate;
     private int id;
+    private int ref;
+    private int step;
+    private int reord;
     public CommentDto()
     {}
-    public CommentDto(int _id,int _bid,String _w,String _c,Date _d)
+    public CommentDto(int _id,int _bid,String _w,String _c,Date _d,int _ref,int _step,int _reord)
     {
         super();
         this.id = _id;
@@ -16,7 +19,27 @@ public class CommentDto {
         this.writer = _w;
         this.content = _c;
         this.createdate = _d;
+        this.ref = _ref;
+        this.step = _step;
+        this.reord = _reord;
+        		
     }
+    public int getRef()
+    {
+    	return this.ref;
+    }
+    public int getStep()
+    {return this.step;}
+    public int getReord()
+    {return this.reord;}
+    public void setRef(int _ref)
+    {
+    	this.ref = _ref;
+    }
+    public void setStep(int _step)
+    {this.step = _step;}
+    public void setReord(int _reord)
+    {this.reord = _reord;}
     public int getId()
     {
     	return this.id;

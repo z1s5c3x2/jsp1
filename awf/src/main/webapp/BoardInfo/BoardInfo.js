@@ -49,10 +49,11 @@
 		let Jl = JSON.parse(data.commentList)
 		for(comitem of Jl)
 		{
-		
+			
 			document.querySelector(".comment").innerHTML += ` <div class="comment-meta citem_${comitem.id}">
           	<span class="comment-author">작성자 : ${comitem.writer}</span> |
           	<span class="comment-date">댓글 작성 날짜:${comitem.createdate}</span>
+          	<button onclick="AddReComment(${comitem.id})">답글</button>
         	</div>
         	<div class="comment-content">
           	내용 : ${comitem.content}
@@ -195,4 +196,28 @@ function CancelEdit(_gstr)
 {
 	
 	document.querySelector(".comment-edit").remove()
+}
+function AddReComment(_gid)
+{
+	$.ajax({
+	url : "../BoardController",
+	type : 'put',
+	dataType: 'text',
+	async:false,
+	data : {
+		action:"ReComment",
+		id : _gid,
+		content: document.querySelector(".inputComment").value
+		
+
+	},
+	success : function(data) {
+		console.log("success")
+		
+     },
+     
+	error : function(e,b) {
+		console.log(e,b)
+	}
+	});
 }
