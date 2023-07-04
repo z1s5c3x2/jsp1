@@ -37,10 +37,12 @@ public class BoardController extends HttpServlet {
 			}
 			return instance;
 		}
+		/*
 		public ArrayList<CommentDto> GetCommentList(int _boardId)
 	    {
 	        return CommentDao.Instance().GetCommentList(_boardId);
-	    }
+	    }*/
+		
 	    public void AddComment(String _writer,String  _com,int _boardId)
 	    {
 	        CommentDao.Instance().AddComment(_writer, _com, _boardId);
@@ -149,28 +151,36 @@ public class BoardController extends HttpServlet {
 
 			BoardDao.Instance().UpdateBoard(request.getParameter("title"),request.getParameter("content"),Integer.parseInt(request.getParameter("id")));
 		}
-		
+		else if(request.getParameter("action").equals("GetReComment"))
+		{
+			JSONObject jo = new JSONObject();
+			String recomlist = new Gson().toJson(CommentDao.Instance().GetReCommentList(Integer.parseInt(request.getParameter("boardid")), Integer.parseInt(request.getParameter("commentid"))));
+			jo.put("loginUser", request.getSession().getAttribute("userId"));
+			jo.put("commentList", recomlist);
+			String jsoncomlist = new Gson().toJson(jo);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(jsoncomlist);
+		}
 		else if(request.getParameter("action").equals("Detail"))
 		{
 			BoardDto _bdt =  SearchIdBoard(Integer.parseInt(request.getParameter("id")));
 			JSONObject jo = new JSONObject();
-			String retcomlist = new Gson().toJson(GetCommentList(Integer.parseInt(request.getParameter("id"))));
+			
+			String retcomlist = new Gson().toJson(CommentDao.Instance().GetCommentList(Integer.parseInt(request.getParameter("id"))));
+
 			jo.put("loginUser", request.getSession().getAttribute("userId"));
 			jo.put("commentList", retcomlist);
 			jo.put("item", _bdt);
 			jo.put("isupdate", request.getSession().getAttribute("userId").equals(_bdt.getWriter()));
 			String jsonBoard = new Gson().toJson(jo);
-			
-			
+
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write(jsonBoard);
-			
-			//response.getWriter().write( new Gson().toJson(jo));
-			
-			
+
 		}
-		else {
+		else { //pagemove
 			
 				int _page = Integer.parseInt(request.getParameter("page")) -1;
 

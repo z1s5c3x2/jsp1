@@ -27,7 +27,7 @@
 	
 	 */
  
- $.ajax({
+ $.ajax({ //get init boar and comment
 	url : "../BoardController",
 	type : 'get',
 	dataType: 'json',
@@ -53,8 +53,47 @@
                 <span id="postViews">조회수:${data.item.viewCount}</span></div>
                 
 		`
-		let Jl = JSON.parse(data.commentList)
-		for(comitem of Jl)
+		if(data.isupdate)
+		{
+			
+			document.querySelector(".writerOptin").innerHTML=
+			`<button onclick="DeletePost(${data.item.id})"> 게시글 삭제 </button>
+                	<button onclick="UpdatePost(${data.item.id})"> 게시글 수정 </button>`
+		}
+		CommentPirnt(JSON.parse(data.commentList),lgu,0)
+
+     },
+     
+	error : function(e,b) {
+		console.log(e,b)
+	}
+	});
+function GetReCommentList(_parid)
+{
+	$.ajax({
+	url : "../BoardController",
+	type : 'get',
+	dataType: 'json',
+	async:false,
+	data : {
+		action:"GetReComment",
+		boardid : new URL(window.location).searchParams.get("boardId"),
+		commentid : _parid
+
+	},
+	success : function(data) {
+		CommentPirnt(JSON.parse(data.commentList),data.loginUser,_parid)
+     },
+     
+	error : function(e,b) {
+		console.log(e,b)
+	}
+	});
+}
+function CommentPirnt(Jl,lgu,_parid)
+{
+
+	for(comitem of Jl)
 		{
 			
 			let _recom = document.createElement("div")
@@ -65,31 +104,37 @@
           	<span class="comment-date">댓글 작성 날짜:${comitem.createdate}</span>
           	<button onclick="AddReComment(${comitem.id})">답글</button>
         	</div>
+        	<div class="recom${comitem.id}">
+        	</div>
         	<div class="comment-content">
           	내용 : ${comitem.content}</div>
         	`
-        	document.querySelector(".comment").appendChild(_recom)
+        	let parhtml
+        	if(_parid >0)
+			{
+				parhtml = document.querySelector(".recom"+_parid)
+			}
+			else
+			{
+				parhtml =document.querySelector(".comment")
+			}
+			console.log(parhtml)
+        	parhtml.appendChild(_recom)
         	if(lgu == comitem.writer)
         	{
-				document.querySelector(".comment").innerHTML += `<div class="comment-actions">
+				parhtml.innerHTML += `<div class="comment-actions">
           <button onclick="EditComment(${comitem.id})">댓글 수정</button>
           <button onclick="DeleteComment(${comitem.id})">댓글 삭제</button>
         </div>`
+            if(comitem.anscnt > 0)
+            {
+				document.querySelector(".citem_"+comitem.id).innerHTML +=`
+				<button onclick="GetReCommentList(${comitem.id})">답글 보기</button>`
+			}
 			}
 		}
-		if(data.isupdate)
-		{
-			
-			document.querySelector(".writerOptin").innerHTML=
-			`<button onclick="DeletePost(${data.item.id})"> 게시글 삭제 </button>
-                	<button onclick="UpdatePost(${data.item.id})"> 게시글 수정 </button>`
-		}
-     },
-     
-	error : function(e,b) {
-		console.log(e,b)
-	}
-	});
+		
+}
 function DeletePost(gid)
 {
 	$.ajax({

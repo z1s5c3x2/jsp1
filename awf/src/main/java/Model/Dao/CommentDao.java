@@ -23,9 +23,10 @@ public class CommentDao {
         ArrayList<CommentDto> comlist = new ArrayList<CommentDto>();
 
         try {
-            String sql = "select * from comment where board_id like ? order by ref desc,reforder";
+            String sql = "select * from comment where board_id = ? and step = 0 order by id";
             ps = DBDao.Instance().con.prepareStatement(sql);
             ps.setInt(1, _boardId);
+            
             rs = ps.executeQuery();
             while(rs.next())
             {
@@ -46,7 +47,34 @@ public class CommentDao {
         }
         return comlist;
     }
-    
+    public ArrayList<CommentDto> GetReCommentList(int _boardId,int _parId)
+    {
+    	ArrayList<CommentDto> comlist = new ArrayList<CommentDto>();
+    	try {
+			String sql = "select * from comment where board_id = ? and parid = ? order by id desc";
+			ps = DBDao.Instance().con.prepareStatement(sql);
+			ps.setInt(1, _boardId);
+            ps.setInt(2, _parId);
+            rs = ps.executeQuery();
+            while(rs.next())
+            {
+                comlist.add(new CommentDto(rs.getInt("id"),
+        				rs.getInt("board_id"),
+        				rs.getString("writer"),
+        				rs.getString("content"),
+        				rs.getDate("createdate"),
+        				rs.getInt("ref"),
+        				rs.getInt("step"),
+        				rs.getInt("reforder"),
+        				rs.getInt("anscount"),
+        				rs.getInt("parid")));
+            }
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e+"recomget");
+		}
+    	return comlist;
+    }
     public void AddComment(String _writer,String _com,int _boardId)
     {
         try {
@@ -123,6 +151,15 @@ public class CommentDao {
     public void AddReComment(String _writer,int _par,String _com)
     {
     	try {  
+    		String sql = "insert into comment(board_id,writer,content,step,ref,reforder,anscount,parid)"
+    				+ "select board_id,?,?,step+1,ref,0,0,id from comment where id like ?";
+    		ps = DBDao.Instance().con.prepareStatement(sql);
+    		ps.setString(1, _writer);
+    		ps.setString(2, _com);
+    		ps.setInt(3, _par);
+    		ps.execute();
+    		ParUpdateAnscnt(_par);
+    		/*
     		CommentDto _parcomment = SearchCommentByID(_par);
     		int instep = _parcomment.getStep()+1;
     		int mstep = GetMaxStep(_parcomment.getRef()); // ref max step
@@ -152,7 +189,7 @@ public class CommentDao {
 			ps.setInt(6, insreford);
 			ps.setInt(7, _par);
 			ps.execute();
-			ParUpdateAnscnt(_par);
+			ParUpdateAnscnt(_par);*/
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e+"recom");
