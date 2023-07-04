@@ -68,6 +68,7 @@ public class BoardDao {
 	{
 		try {
 			String sql = "update board set content =?,title =? where id=?";
+			//
 			ps = DBDao.Instance().con.prepareStatement(sql);
 
 			ps.setString(1, _con);

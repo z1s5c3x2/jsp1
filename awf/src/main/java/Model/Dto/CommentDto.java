@@ -8,10 +8,12 @@ public class CommentDto {
     private int id;
     private int ref;
     private int step;
-    private int reord;
+    private int reford;
+    private int anscnt;
+    private int parid;
     public CommentDto()
     {}
-    public CommentDto(int _id,int _bid,String _w,String _c,Date _d,int _ref,int _step,int _reord)
+    public CommentDto(int _id,int _bid,String _w,String _c,Date _d,int _ref,int _step,int _reford,int _anscnt, int _parid)
     {
         super();
         this.id = _id;
@@ -21,25 +23,35 @@ public class CommentDto {
         this.createdate = _d;
         this.ref = _ref;
         this.step = _step;
-        this.reord = _reord;
+        this.reford = _reford;
+        this.anscnt = _anscnt;
+        this.parid = _parid;
         		
     }
+    public int getcnt()
+    {return this.anscnt;}
+    public int getParId()
+    {return this.parid;}
+    public void setcnt(int _cnt)
+    {this.anscnt = _cnt;}
+    public void setparid(int _pid)
+    {this.parid = _pid;}
     public int getRef()
     {
     	return this.ref;
     }
     public int getStep()
     {return this.step;}
-    public int getReord()
-    {return this.reord;}
+    public int getRefOrd()
+    {return this.reford;}
     public void setRef(int _ref)
     {
     	this.ref = _ref;
     }
     public void setStep(int _step)
     {this.step = _step;}
-    public void setReord(int _reord)
-    {this.reord = _reord;}
+    public void setRefOrd(int _reord)
+    {this.reford = _reord;}
     public int getId()
     {
     	return this.id;

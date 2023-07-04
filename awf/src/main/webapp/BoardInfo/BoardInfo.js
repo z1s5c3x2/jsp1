@@ -18,7 +18,14 @@
 		console.log(e,b)
 	}
 	});*/
+	/*
+	ref = 최상위 댓글
+	reforder = 그룹 내 순서
+	step = 깊이
+	parcom = 상위 부모
+	anscnt = 자식 답글 수
 	
+	 */
  
  $.ajax({
 	url : "../BoardController",
@@ -50,14 +57,18 @@
 		for(comitem of Jl)
 		{
 			
-			document.querySelector(".comment").innerHTML += ` <div class="comment-meta citem_${comitem.id}">
+			let _recom = document.createElement("div")
+			_recom.className = "comment-meta citem_"+comitem.id
+			_recom.style.paddingLeft = comitem.step*50+"px"
+			_recom.innerHTML = ` 
           	<span class="comment-author">작성자 : ${comitem.writer}</span> |
           	<span class="comment-date">댓글 작성 날짜:${comitem.createdate}</span>
           	<button onclick="AddReComment(${comitem.id})">답글</button>
         	</div>
         	<div class="comment-content">
-          	내용 : ${comitem.content}
-        	</div>`
+          	내용 : ${comitem.content}</div>
+        	`
+        	document.querySelector(".comment").appendChild(_recom)
         	if(lgu == comitem.writer)
         	{
 				document.querySelector(".comment").innerHTML += `<div class="comment-actions">
@@ -212,7 +223,7 @@ function AddReComment(_gid)
 
 	},
 	success : function(data) {
-		console.log("success")
+		location.href= "/awf/BoardInfo/BoardInfo.html?boardId="+new URL(window.location).searchParams.get("boardId")
 		
      },
      

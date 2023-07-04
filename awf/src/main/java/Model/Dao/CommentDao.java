@@ -3,6 +3,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import javax.crypto.spec.PSource;
+
 import Model.Dto.CommentDto;
 public class CommentDao {
     private static CommentDao instance;
@@ -21,13 +23,22 @@ public class CommentDao {
         ArrayList<CommentDto> comlist = new ArrayList<CommentDto>();
 
         try {
-            String sql = "select * from comment where board_id like ? order by ref desc,reorder";
+            String sql = "select * from comment where board_id like ? order by ref desc,reforder";
             ps = DBDao.Instance().con.prepareStatement(sql);
             ps.setInt(1, _boardId);
             rs = ps.executeQuery();
             while(rs.next())
             {
-                comlist.add(new CommentDto(rs.getInt("id"),rs.getInt("board_id"), rs.getString("writer"), rs.getString("content"), rs.getDate("createdate"),rs.getInt("ref"),rs.getInt("step"),rs.getInt("reorder")));
+                comlist.add(new CommentDto(rs.getInt("id"),
+        				rs.getInt("board_id"),
+        				rs.getString("writer"),
+        				rs.getString("content"),
+        				rs.getDate("createdate"),
+        				rs.getInt("ref"),
+        				rs.getInt("step"),
+        				rs.getInt("reforder"),
+        				rs.getInt("anscount"),
+        				rs.getInt("parid")));
             }
         } catch (Exception e) {
             // TODO: handle exception
@@ -40,7 +51,7 @@ public class CommentDao {
     {
         try {
         	
-            String sql = "insert into comment (board_id,writer,content,step,ref,reorder) values(?,?,?,0,(select * from(select ifnull(max(ref),0)+1 from comment) as temp),0)";
+            String sql = "insert into comment (board_id,writer,content,step,ref,reforder,anscount,parid) values(?,?,?,0,(select * from(select ifnull(max(ref),0)+1 from comment) as temp),0,0,0)";
             ps = DBDao.Instance().con.prepareStatement(sql);
             ps.setInt(1, _boardId);
             ps.setString(2, _writer);
@@ -51,89 +62,97 @@ public class CommentDao {
         	System.out.println(e);
         }
     }
-    public void ReOrdAdderbig(int _ref,int _reo)
+    public void UpdateRefOrder(int _ref)
     {
     	try {
-			String sql = "update comment set reorder=reorder+1 where reorder > ? and ref like ?";
+			String sql = "update comment set reforder=reforder+1 where reforder >= ?";
 			ps = DBDao.Instance().con.prepareStatement(sql);
-			ps.setInt(1, _reo);
-			ps.setInt(2, _ref);
+			ps.setInt(1, _ref);
 			ps.executeUpdate();
 		} catch (Exception e) {
 			// TODO: handle exception
-			System.out.println(e);
+			System.out.println(e+"Updatereforder");
 		}
     }
-    public void ReOrdAdderequl(int _ref,int _step,int _reo)
+    public void ParUpdateAnscnt(int _id)
     {
     	try {
-			String sql = "update comment set reorder=reorder+1 where (step < ? and reorder > ?) and ref like ?";
+			String sql = "update comment set anscount=anscount+1 where id like ?";
 			ps = DBDao.Instance().con.prepareStatement(sql);
-			ps.setInt(1, _step);
-			ps.setInt(2, _reo);
-			ps.setInt(3, _step);
+			ps.setInt(1, _id);
 			ps.executeUpdate();
 		} catch (Exception e) {
 			// TODO: handle exception
-			System.out.println(e);
+			System.out.println("parupdateanscount"+e);
 		}
+    }
+    public int GetMaxStep(int _ref)
+    {
+    	int retnum = 0;
+    	try {
+			String sql = "select max(step) from (select step from comment where ref like ?)as tmp";
+			ps = DBDao.Instance().con.prepareStatement(sql);
+			ps.setInt(1, _ref);
+			rs = ps.executeQuery();
+			rs.next();
+			retnum = rs.getInt(1);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("getmax"+e);
+		}
+    	return retnum;
+    }
+    public int GetSumAnsCount(int _ref)
+    {
+    	int retnum = 0;
+    	try {
+			String sql = "select sum(anscount) from (select anscount from comment where ref like ?)as tmp";
+			ps = DBDao.Instance().con.prepareStatement(sql);
+			ps.setInt(1, _ref);
+			rs = ps.executeQuery();
+			rs.next();
+			retnum = rs.getInt(1);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("getmax"+e);
+		}
+    	return retnum;
     }
     public void AddReComment(String _writer,int _par,String _com)
     {
-    	try {
-    		CommentDto _parcom = SearchCommentByID(_par);
-    		String sql = "select max(step),max(reorder) from comment where ref like ?";
-    		ps = DBDao.Instance().con.prepareStatement(sql);
-    		ps.setInt(1, _parcom.getRef());
-    		rs = ps.executeQuery();
-    		rs.next();
-    		System.out.println("?????");
-    		int mstep = rs.getInt(1); // step
-    		int mord = rs.getInt(2); // reord
+    	try {  
+    		CommentDto _parcomment = SearchCommentByID(_par);
+    		int instep = _parcomment.getStep()+1;
+    		int mstep = GetMaxStep(_parcomment.getRef()); // ref max step
     		
-    		int savstep = _parcom.getStep()+1;
-    		
-            
-    		if(mstep > savstep)
-    		{	
-    			sql = "insert into comment (board_id,writer,content,step,ref,reorder) values(?,?,?,?,?,?)";
-        		ps = DBDao.Instance().con.prepareStatement(sql);
-        		ps.setInt(1, _parcom.getBoardId());
-                ps.setString(2, _writer);
-                ps.setString(3, _com);
-                ps.setInt(4, _parcom.getStep()+1);
-                ps.setInt(5, _parcom.getRef());
-    			ps.setInt(6, mord+1);
-    			ps.execute();
-    			return;
-    		}
-    		else if(mstep == savstep)
+    		int insreford = 0;
+    		if(mstep > instep)
     		{
-    			ReOrdAdderequl(_parcom.getRef(),savstep,_parcom.getReord()); // +1해서 저장
+    			insreford =  GetSumAnsCount(_parcomment.getRef())+1;
     		}
-    		else if(mstep < savstep)
+    		else if(mstep == instep)
     		{
-    			ReOrdAdderbig(_parcom.getRef(),_parcom.getReord());
-	
+    			insreford = _parcomment.getcnt()+_parcomment.getRefOrd()+1;
     		}
-    		sql = "insert into comment (board_id,writer,content,step,ref,reorder) values(?,?,?,?,?,?)";
+    		else
+    		{
+    			insreford =  _parcomment.getRefOrd()+1;
+    		}
+    		UpdateRefOrder(insreford);
+    		String sql = "insert into comment (board_id,writer,content,step,ref,reforder,anscount,parid) values"
+					+ "(?,?,?,?,?,?,0,?)";
     		ps = DBDao.Instance().con.prepareStatement(sql);
-    		ps.setInt(1, _parcom.getBoardId());
-            ps.setString(2, _writer);
-            ps.setString(3, _com);
-            ps.setInt(4, _parcom.getStep()+1);
-            ps.setInt(5, _parcom.getRef());
-    		ps.setInt(6, _parcom.getReord()+1);
-    		System.out.println("여기");
-    		 ps.execute();
-    		 System.out.println("여기2");
-    		/*
-        	ps = DBDao.Instance().con.prepareStatement(sql);
-        	
-            ps.setInt(4, _parcom.getStep()+1);
-            ps.setInt(5, _parcom.getRef());
-            ps.execute();
-            recommentUpdate(_parcom.getRef(),_parcom.getStep()+1);*/
+    		ps.setInt(1, _parcomment.getBoardId());
+			ps.setString(2, _writer);
+			ps.setString(3, _com);
+			ps.setInt(4, instep);
+			ps.setInt(5, _parcomment.getRef());
+			ps.setInt(6, insreford);
+			ps.setInt(7, _par);
+			ps.execute();
+			ParUpdateAnscnt(_par);
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e+"recom");
@@ -141,7 +160,7 @@ public class CommentDao {
     }
     public void DeleteComment(int _id)
     {
-    	try {
+    	try { 
     		String sql ="delete from comment where id = ?";
     		ps = DBDao.Instance().con.prepareStatement(sql);
     		ps.setInt(1, _id);
@@ -161,7 +180,16 @@ public class CommentDao {
     		ps.setInt(1, _id);
     		rs = ps.executeQuery();
     		rs.next();
-    		retcom = new CommentDto(rs.getInt("id"),rs.getInt("board_id"), rs.getString("writer"), rs.getString("content"), rs.getDate("createdate"),rs.getInt("ref"),rs.getInt("step"),rs.getInt("reorder"));
+    		retcom = new CommentDto(rs.getInt("id"),
+    				rs.getInt("board_id"),
+    				rs.getString("writer"),
+    				rs.getString("content"),
+    				rs.getDate("createdate"),
+    				rs.getInt("ref"),
+    				rs.getInt("step"),
+    				rs.getInt("reforder"),
+    				rs.getInt("anscount"),
+    				rs.getInt("parid"));
 
 			
 		} catch (Exception e) {
