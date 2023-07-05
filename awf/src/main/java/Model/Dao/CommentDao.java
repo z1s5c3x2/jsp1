@@ -79,7 +79,7 @@ public class CommentDao {
     {
         try {
         	
-            String sql = "insert into comment (board_id,writer,content,step,ref,reforder,anscount,parid) values(?,?,?,0,(select * from(select ifnull(max(ref),0)+1 from comment) as temp),0,0,0)";
+            String sql = "insert into comment (board_id,writer,content,step,ref,reforder,anscount) values(?,?,?,0,(select * from(select ifnull(max(ref),0)+1 from comment) as temp),0,0)";
             ps = DBDao.Instance().con.prepareStatement(sql);
             ps.setInt(1, _boardId);
             ps.setString(2, _writer);
