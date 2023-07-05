@@ -39,8 +39,6 @@ public class LoginController extends HttpServlet {
         String _e =AccountDao.Instance().AccountLogin(_id,_pwd);
 		if(_e.equals(_id))
 		{
-			AccountDao.Instance().adt = new AccountDto();
-			AccountDao.Instance().adt.SetId(_id);
 			FileService.Instance().SaveLoginLog(_id,DBDao.Instance().GetDBTime());
 		}
         return _e;

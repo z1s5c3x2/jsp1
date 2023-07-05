@@ -60,7 +60,8 @@
 			`<button onclick="DeletePost(${data.item.id})"> 게시글 삭제 </button>
                 	<button onclick="UpdatePost(${data.item.id})"> 게시글 수정 </button>`
 		}
-		CommentPirnt(JSON.parse(data.commentList),lgu,0)
+		//CommentPirnt(JSON.parse(data.commentList),lgu,0)
+		InitComment(JSON.parse(data.commentList),lgu,0)
 
      },
      
@@ -82,7 +83,8 @@ function GetReCommentList(_parid)
 
 	},
 	success : function(data) {
-		CommentPirnt(JSON.parse(data.commentList),data.loginUser,_parid)
+		InitComment(JSON.parse(data.commentList),data.loginUser,_parid)
+		//CommentPirnt(JSON.parse(data.commentList),data.loginUser,_parid)
      },
      
 	error : function(e,b) {
@@ -90,60 +92,92 @@ function GetReCommentList(_parid)
 	}
 	});
 }
-function CommentPirnt(Jl,lgu,_parid)
+function InitComment(_commentList,_logUser,_parid)
 {
-
-	for(comitem of Jl)
-		{
-			
-			let _recom = document.createElement("div")
-			_recom.className = "comment-meta citem_"+comitem.id
-			_recom.style.paddingLeft = comitem.step*50+"px"
-			_recom.innerHTML = ` 
-          	<span class="comment-author">작성자 : ${comitem.writer}</span> |
-          	<span class="comment-date">댓글 작성 날짜:${comitem.createdate}</span>
-          	<button onclick="AddReComment(${comitem.id})">답글</button>
-        	</div>
-        	<div class="recom${comitem.id}">
-        	</div>
-        	<div class="comment-content">
-          	내용 : ${comitem.content}</div>
-        	`
-        	let parhtml
-        	if(_parid >0)
-			{
-				parhtml = document.querySelector(".recom"+_parid)
-			}
-			else
-			{
-				parhtml =document.querySelector(".comment")
-			}
-			console.log(parhtml)
-        	parhtml.appendChild(_recom)
-        	if(lgu == comitem.writer)
-        	{
-				parhtml.innerHTML += `<div class="comment-actions">
-          <button onclick="EditComment(${comitem.id})">댓글 수정</button>
-          <button onclick="DeleteComment(${comitem.id})">댓글 삭제</button>
-        </div>`
-            if(comitem.anscnt > 0)
-            {
-				document.querySelector(".citem_"+comitem.id).innerHTML +=`
-				<button onclick="GetReCommentList(${comitem.id})">답글 보기</button>`
-			}
-			}
-		}
+	let comarea
+	if(_parid == 0)
+	 {
+		 comarea= document.querySelector('.comment-list')
+	}else{
+		comarea = document.querySelector('.com-'+_parid).querySelector('.recommentlist-box')
+		comarea.style.marginLeft = "50px"
+		comarea.style.display = "block"
 		
+	}
+	for(item of _commentList)
+	{
+		let _html=``
+		_html += `
+		<div class="comment com-${item.id}">
+       <span class="comment-writer"> 작성자 : ${ item.writer} </span>|
+       <span class="comment-createdate"> 작성 날짜: ${ item.createdate} </span>
+       <div class="comment-content">
+       	${item.content}
+       </div>
+       <div class="comment-btn-list">`
+       if(_logUser == item.writer)
+       {
+		   _html += `<button onclick="EnableModifyBox(${ item.id})" class="comment-enable-modify"> 수정 </button>
+       		<button onclick="DeleteComment(${ item.id})" class="comment-delete"> 삭제 </button>`
+       	}
+       
+       _html +=`
+       <button onclick="EnableReComment(${item.id})" class="enable-recomment"> 답글달기 </button>`
+       if(item.anscnt > 0)
+       {
+       	 _html += `<button onclick="GetReCommentList(${item.id})" class="comment-get-recomment"> 답글보기 </button>`
+       	}
+       	
+       _html += `</div>
+       <div class="recomment-box">
+       <textarea placeholder="답글을 입력하세요" class="inputReComment"></textarea>
+       <button onclick="AddReComment(${item.id})"> 답글 작성 </button>
+       <button onclick="disableRecomment(${item.id})"> 취소 </button>
+        </div>
+        <div class="modify-box">
+        	<textarea class="ModifiyComment"> ${item.content}</textarea>
+        	<button onclick="modifyComment(${ item.id})"> 수정 완료</button>
+        	<button onclick="disableModify(${ item.id})"> 취소 </button>
+        </div>
+        <div class="recommentlist-box">
+
+        	</div>	
+        </div>`
+		comarea.innerHTML+= _html
+	}
+}
+function modifyComment(_id)
+{
+	$.ajax({
+	url : "../BoardController",
+	type : 'put',
+	dataType: 'text',
+	async:false,
+	data : {
+		action:"ModiyfyComment",
+		id : _id,
+		content : document.querySelector('.com-'+_id).querySelector('.ModifiyComment').value
+
+	},
+	success : function(data) {
+		location.href= "/awf/BoardInfo/BoardInfo.html?boardId="+new URL(window.location).searchParams.get("boardId")
+     },
+     
+	error : function(e,b) {
+		console.log(e,b)
+	}
+	});
+
 }
 function DeletePost(gid)
 {
 	$.ajax({
 	url : "../BoardController",
-	type : 'get',
+	type : 'delete',
 	dataType: 'json',
 	async:false,
 	data : {
-		action:"delete",
+		action:"Board",
 		id : gid,
 		
 
@@ -160,17 +194,12 @@ function DeletePost(gid)
 	location.href= "/awf/Board/Board.html?page=1"
 }
 
-function UpdatePost(gid)
-{
 
-	location.href= "/awf/BoardModify/BoardModify.html?boardId="+gid
-	//http://localhost:8080/awf/Board/Board.html?page=1
-}
 function SubmitComment()
 {
 	$.ajax({
 	url : "../BoardController",
-	type : 'get',
+	type : 'put',
 	dataType: 'text',
 	async:false,
 	data : {
@@ -200,7 +229,7 @@ function DeleteComment(_gid)
 	dataType: 'text',
 	async:false,
 	data : {
-		action:"CommentDelete",
+		action:"Comment",
 		id : _gid,
 
 
@@ -215,44 +244,7 @@ function DeleteComment(_gid)
 	}
 	});
 }
-function EditComment(onpos)
-{
-	
-	document.querySelector(".citem_"+onpos).innerHTML +=`<div class="comment-edit">
-      			<textarea class="editarray"></textarea>
-      			<button onclick="UpdateComment(${onpos})">수정</button>
-      				<button onclick="CancelEdit(${onpos})">취소</button>
-    			</div>`
-}
-function UpdateComment(_comid)
-{
-	$.ajax({
-	url : "../BoardController",
-	type : 'put',
-	dataType: 'text',
-	async:false,
-	data : {
-		action:"CommentModify",
-		id : _comid,
-		content: document.querySelector("editarray").value
-		
 
-	},
-	success : function(data) {
-		location.href= "/awf/BoardInfo/BoardInfo.html?boardId="+new URL(window.location).searchParams.get("boardId")
-		
-     },
-     
-	error : function(e,b) {
-		console.log(e,b)
-	}
-	});
-}
-function CancelEdit(_gstr)
-{
-	
-	document.querySelector(".comment-edit").remove()
-}
 function AddReComment(_gid)
 {
 	$.ajax({
@@ -263,7 +255,7 @@ function AddReComment(_gid)
 	data : {
 		action:"ReComment",
 		id : _gid,
-		content: document.querySelector(".inputComment").value
+		content: document.querySelector(".com-"+_gid).querySelector('.inputReComment').value
 		
 
 	},
@@ -276,4 +268,26 @@ function AddReComment(_gid)
 		console.log(e,b)
 	}
 	});
+}
+
+
+function UpdatePost(gid)
+{
+	location.href= "/awf/BoardModify/BoardModify.html?boardId="+gid
+}
+function EnableModifyBox(_id)
+{
+	document.querySelector('.com-'+_id).querySelector('.modify-box').style.display = "block";
+}
+function disableModify(_id)
+{
+	document.querySelector('.com-'+_id).querySelector('.modify-box').style.display = "none";
+}
+function EnableReComment(_id)
+{
+	document.querySelector('.com-'+_id).querySelector('.recomment-box').style.display = "block";
+}
+function disableRecomment(_id)
+{
+	document.querySelector('.com-'+_id).querySelector('.recomment-box').style.display = "none";
 }

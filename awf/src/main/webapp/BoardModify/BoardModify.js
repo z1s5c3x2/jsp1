@@ -28,11 +28,11 @@ function ModifyPost()
 {
 	$.ajax({
 	url : "../BoardController",
-	type : 'get',
+	type : 'put',
 	dataType: 'text',
 	async:false,
 	data : {
-		action:"Modify",
+		action:"BoardModify",
 		id : new URL(window.location).searchParams.get("boardId"),
 		title : document.getElementById('title').value,
 		content: document.getElementById('content').value

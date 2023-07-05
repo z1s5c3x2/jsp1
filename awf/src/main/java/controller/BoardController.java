@@ -96,23 +96,31 @@ public class BoardController extends HttpServlet {
 	    	{
 	    		CommentDao.Instance().AddReComment(request.getSession().getAttribute("userId").toString(),Integer.parseInt(request.getParameter("id")),request.getParameter("content"));
 	    	}
-	    	/*
-	    	BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
-	    	String _rd =null;
-	    	String _rd2= "";
-	    	while((_rd = br.readLine()) != null)
+	    	else if(request.getParameter("action").equals("Addcomment"))
+			{
+				AddComment(request.getSession().getAttribute("userId").toString(),request.getParameter("content"),Integer.parseInt(request.getParameter("id")));
+			}
+	    	else if(request.getParameter("action").equals("ModiyfyComment"))
 	    	{
-	    		_rd2 += _rd;
-	    	}
-	    	System.out.println(_rd2);*/
+	    		CommentDao.Instance().ModifyComment(Integer.parseInt(request.getParameter("id")), request.getParameter("content"));
+	    	}else if(request.getParameter("action").equals("BoardModify"))
+			{
+				BoardDao.Instance().UpdateBoard(request.getParameter("title"),request.getParameter("content"),Integer.parseInt(request.getParameter("id")));
+			}
 	    	
 	    }
 	    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	    {
-	    	BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
-	    	String _str = br.readLine();
-	    	int did = Integer.parseInt(_str.split("Delete")[1].split("=")[1]);
-	    	CommentDao.Instance().DeleteComment(did);
+	    	if(request.getParameter("action").equals("Comment"))
+	    	{
+	    		CommentDao.Instance().DeleteComment(Integer.parseInt(request.getParameter("id")));
+	    	}
+	    	else if(request.getParameter("action").equals("Board"))
+			{
+				 BoardDao.Instance().DeleteBoard(Integer.parseInt(request.getParameter("id")));
+			}
+	    	
+
 	    }
     /**
      * @see HttpServlet#HttpServlet()
@@ -137,20 +145,7 @@ public class BoardController extends HttpServlet {
 
 			
 		}
-		else if(request.getParameter("action").equals("Addcomment"))
-		{
-
-			AddComment(request.getSession().getAttribute("userId").toString(),request.getParameter("content"),Integer.parseInt(request.getParameter("id")));
-		}
-		else if(request.getParameter("action").equals("delete"))
-		{
-			 BoardDao.Instance().DeleteBoard(Integer.parseInt(request.getParameter("id")));
-		}
-		else if(request.getParameter("action").equals("Modify"))
-		{
-
-			BoardDao.Instance().UpdateBoard(request.getParameter("title"),request.getParameter("content"),Integer.parseInt(request.getParameter("id")));
-		}
+		
 		else if(request.getParameter("action").equals("GetReComment"))
 		{
 			JSONObject jo = new JSONObject();

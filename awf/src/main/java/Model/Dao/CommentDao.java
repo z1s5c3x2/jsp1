@@ -23,7 +23,7 @@ public class CommentDao {
         ArrayList<CommentDto> comlist = new ArrayList<CommentDto>();
 
         try {
-            String sql = "select * from comment where board_id = ? and step = 0 order by id";
+            String sql = "select * from comment where board_id = ? and step = 0 order by id desc";
             ps = DBDao.Instance().con.prepareStatement(sql);
             ps.setInt(1, _boardId);
             
@@ -89,6 +89,19 @@ public class CommentDao {
             // TODO: handle exception
         	System.out.println(e);
         }
+    }
+    public void ModifyComment(int _id,String _content)
+    {
+    	try {
+    		String sql = "update comment set content=? where id = ?";
+    		ps = DBDao.Instance().con.prepareStatement(sql);
+    		ps.setString(1, _content);
+    		ps.setInt(2, _id);
+    		ps.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e+"modCom");
+		}
     }
     public void UpdateRefOrder(int _ref)
     {
@@ -159,37 +172,7 @@ public class CommentDao {
     		ps.setInt(3, _par);
     		ps.execute();
     		ParUpdateAnscnt(_par);
-    		/*
-    		CommentDto _parcomment = SearchCommentByID(_par);
-    		int instep = _parcomment.getStep()+1;
-    		int mstep = GetMaxStep(_parcomment.getRef()); // ref max step
-    		
-    		int insreford = 0;
-    		if(mstep > instep)
-    		{
-    			insreford =  GetSumAnsCount(_parcomment.getRef())+1;
-    		}
-    		else if(mstep == instep)
-    		{
-    			insreford = _parcomment.getcnt()+_parcomment.getRefOrd()+1;
-    		}
-    		else
-    		{
-    			insreford =  _parcomment.getRefOrd()+1;
-    		}
-    		UpdateRefOrder(insreford);
-    		String sql = "insert into comment (board_id,writer,content,step,ref,reforder,anscount,parid) values"
-					+ "(?,?,?,?,?,?,0,?)";
-    		ps = DBDao.Instance().con.prepareStatement(sql);
-    		ps.setInt(1, _parcomment.getBoardId());
-			ps.setString(2, _writer);
-			ps.setString(3, _com);
-			ps.setInt(4, instep);
-			ps.setInt(5, _parcomment.getRef());
-			ps.setInt(6, insreford);
-			ps.setInt(7, _par);
-			ps.execute();
-			ParUpdateAnscnt(_par);*/
+ 
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println(e+"recom");
@@ -198,14 +181,31 @@ public class CommentDao {
     public void DeleteComment(int _id)
     {
     	try { 
-    		String sql ="delete from comment where id = ?";
+    		String sql = " update comment set anscount=anscount-1 where id = (select * from (select parid from comment where id = ?) as temp)";
+    		ps = DBDao.Instance().con.prepareStatement(sql);
+    		sql ="delete from comment where id = ?";
+    		ps.setInt(1, _id);
+    		ps.executeUpdate();
     		ps = DBDao.Instance().con.prepareStatement(sql);
     		ps.setInt(1, _id);
     		ps.executeUpdate();
+    		
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e+"delete and update");
+		}
+    }
+    public void DeleteAnsUpdate(int _id)
+    {
+    	try {
+			String sql = "update comment set anscount=anscount-1 where id like ?";
+			ps = DBDao.Instance().con.prepareStatement(sql);
+			ps.setInt(1,_id);
+			ps.executeUpdate();
 			
 		} catch (Exception e) {
 			// TODO: handle exception
-			System.out.println(e);
+			System.out.println(e+"Delete ans update");
 		}
     }
     public CommentDto SearchCommentByID(int _id)
